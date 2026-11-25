@@ -1,3 +1,4 @@
+import { bufferOrganizationAllowed } from '@gitroom/nestjs-libraries/integrations/social/buffer.config';
 import {
   Body,
   Controller,
@@ -243,6 +244,10 @@ export class IntegrationsController {
     const integrationProvider = this._integrationManager.getSocialIntegration(
       migrateTo || integration
     );
+
+    if (!bufferOrganizationAllowed(integrationProvider.identifier, org.id)) {
+      throw new Error('Buffer is not configured for this workspace');
+    }
 
     if (integrationProvider.externalUrl && !externalUrl) {
       throw new Error('Missing external url');
