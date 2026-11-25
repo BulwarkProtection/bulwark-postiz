@@ -1,3 +1,4 @@
+import { BufferDto } from './buffer.dto';
 import { RedditSettingsDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/reddit.dto';
 import { PinterestSettingsDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/pinterest.dto';
 import { YoutubeSettingsDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/youtube.settings.dto';
@@ -40,6 +41,9 @@ export type AllProvidersSettings =
   | ProviderExtension<'kick', KickDto>
   | ProviderExtension<'twitch', TwitchDto>
   | ProviderExtension<'x', XDto>
+  | ProviderExtension<'x-buffer', BufferDto>
+  | ProviderExtension<'linkedin-buffer', BufferDto>
+  | ProviderExtension<'tiktok-buffer', BufferDto>
   | ProviderExtension<'linkedin', LinkedinDto>
   | ProviderExtension<'linkedin-page', LinkedinDto>
   | ProviderExtension<'instagram', InstagramDto>
@@ -80,6 +84,9 @@ export const allProviders = (setEmpty?: any) => {
     { value: KickDto, name: 'kick' },
     { value: TwitchDto, name: 'twitch' },
     { value: XDto, name: 'x' },
+    { value: BufferDto, name: 'x-buffer' },
+    { value: BufferDto, name: 'linkedin-buffer' },
+    { value: BufferDto, name: 'tiktok-buffer' },
     { value: LinkedinDto, name: 'linkedin' },
     { value: LinkedinDto, name: 'linkedin-page' },
     { value: InstagramDto, name: 'instagram' },
