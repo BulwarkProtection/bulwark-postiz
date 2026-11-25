@@ -75,7 +75,8 @@ try {
   $running = (D inspect postiz --format '{{.Image}}').Trim()
   if ($running -ne $OriginalImage) { throw 'Running image does not match the expected original. No changes made.' }
   if ((D inspect postiz --format '{{.State.Health.Status}}').Trim() -ne 'healthy') { throw 'Existing Postiz is not healthy.' }
-  $project = (D inspect postiz --format '{{index .Config.Labels "com.docker.compose.project"}}').Trim()
+  $labels = (D inspect postiz --format '{{json .Config.Labels}}') | ConvertFrom-Json
+  $project = $labels.'com.docker.compose.project'
   if ($project -ne 'postiz') { throw 'Unexpected Compose project.' }
   D image inspect $Image --format '{{.Id}}'
   $rollbackTag = 'bulwark-postiz:pre-buffer-' + $OriginalImage.Replace('sha256:','').Substring(0,12)
