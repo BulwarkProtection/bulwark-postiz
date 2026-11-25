@@ -23,7 +23,7 @@ const TikTokSettings = () => {
 const common = {
   comments: false as const,
   postComment: PostComment.POST,
-  minimumCharacters: [],
+  minimumCharacters: [] as never[],
   dto: BufferDto,
 };
 export const BufferXProvider = withProvider<BufferDto>({
