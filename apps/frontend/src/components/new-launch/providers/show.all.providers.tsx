@@ -41,7 +41,12 @@ import WhopProvider from '@gitroom/frontend/components/new-launch/providers/whop
 import MeweProvider from '@gitroom/frontend/components/new-launch/providers/mewe/mewe.provider';
 import TumblrProvider from '@gitroom/frontend/components/new-launch/providers/tumblr/tumblr.provider';
 
+import { BufferXProvider, BufferLinkedInProvider, BufferTikTokProvider } from './buffer/buffer.provider';
+
 export const Providers = [
+  { identifier: 'x-buffer', component: BufferXProvider },
+  { identifier: 'linkedin-buffer', component: BufferLinkedInProvider },
+  { identifier: 'tiktok-buffer', component: BufferTikTokProvider },
   {
     identifier: 'devto',
     component: DevtoProvider,
