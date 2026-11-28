@@ -1,3 +1,4 @@
+import { bufferOrganizationAllowed } from '@gitroom/nestjs-libraries/integrations/social/buffer.config';
 import {
   Body,
   Controller,
@@ -80,6 +81,9 @@ export class NoAuthIntegrationsController {
     }
 
     const org = await this._organizationService.getOrgById(organization);
+    if (!org || !bufferOrganizationAllowed(integrationProvider.identifier, org.id)) {
+      throw new HttpException('Buffer is not configured for this workspace', 403);
+    }
 
     if (!integrationProvider.customFields) {
       await ioRedis.del(`login:${body.state}`);

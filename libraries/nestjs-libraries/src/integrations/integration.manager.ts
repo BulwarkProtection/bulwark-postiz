@@ -39,8 +39,14 @@ import { WhopProvider } from '@gitroom/nestjs-libraries/integrations/social/whop
 import { MeweProvider } from '@gitroom/nestjs-libraries/integrations/social/mewe.provider';
 import { TumblrProvider } from '@gitroom/nestjs-libraries/integrations/social/tumblr.provider';
 
+import { BufferProvider } from './social/buffer.provider';
+import { getBufferConfig, isBufferProvider } from './social/buffer.config';
+
 export const socialIntegrationList: Array<SocialAbstract & SocialProvider> = [
   new XProvider(),
+  new BufferProvider('x-buffer'),
+  new BufferProvider('linkedin-buffer'),
+  new BufferProvider('tiktok-buffer'),
   new LinkedinProvider(),
   new LinkedinPageProvider(),
   new RedditProvider(),
@@ -86,6 +92,7 @@ export class IntegrationManager {
   // provider through the new provider's OAuth and migrates the channel in
   // place, keeping its id, scheduled posts and settings.
   isHiddenProvider(identifier: string) {
+    if (isBufferProvider(identifier) && !getBufferConfig(identifier)) return true;
     return (process.env.HIDDEN_PROVIDERS || '')
       .split(',')
       .map((p) => p.trim())
@@ -252,6 +259,7 @@ export class IntegrationManager {
         (p) =>
           !this.isHiddenProvider(p.identifier) &&
           !p.externalUrl &&
+          !isBufferProvider(p.identifier) &&
           !p.customFields &&
           !p.isWeb3 &&
           !p.isChromeExtension

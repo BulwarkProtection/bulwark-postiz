@@ -1,0 +1,33 @@
+name: Bulwark Buffer validation
+on:
+  push:
+    branches:
+      - feature/buffer-publishing-v2.26.0
+      - 'integration/buffer-reconciliation-*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bulwark-buffer-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Isolated provider tests
+        run: |
+          npm install --prefix /tmp/buffer-test typescript@5.5.4 --no-audit --no-fund
+          NODE_PATH=/tmp/buffer-test/node_modules node --test scripts/buffer-integration.test.cjs
+      - name: Full Postiz image build
+        run: |
+          docker build -f Dockerfile.dev --build-arg NEXT_PUBLIC_VERSION=v2.26.0-bulwark-buffer -t bulwark-postiz:ci .
+      - name: Run tests inside custom image
+        run: docker run --rm --network none --entrypoint node bulwark-postiz:ci --test /app/scripts/buffer-integration.test.cjs
