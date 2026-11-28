@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - feature/buffer-publishing-v2.26.0
+      - 'integration/buffer-reconciliation-*'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 permissions:
   contents: read
