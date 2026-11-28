@@ -1,4 +1,5 @@
 import { bufferOrganizationAllowed } from '@gitroom/nestjs-libraries/integrations/social/buffer.config';
+import dayjs from 'dayjs';
 import {
   Body,
   Controller,
@@ -129,7 +130,10 @@ export class IntegrationsController {
             stripLinks: !!findIntegration?.stripLinks?.(),
             picture: p.picture || '/no-picture.jpg',
             identifier: p.providerIdentifier,
-            inBetweenSteps: p.inBetweenSteps,
+            inBetweenSteps: this._integrationService.needsPageSelection(
+              p,
+              findIntegration
+            ),
             refreshNeeded: p.refreshNeeded,
             isCustomFields: !!findIntegration.customFields,
             isChromeExtension: !!findIntegration.isChromeExtension,
@@ -376,6 +380,31 @@ export class IntegrationsController {
     );
     if (!integrationProvider) {
       throw new Error('Invalid provider');
+    }
+
+    // Only for a channel that still has to select its page: other channels
+    // post fine past the stored expiration, a failed refresh would flag them.
+    if (
+      this._integrationService.needsPageSelection(
+        getIntegration,
+        integrationProvider
+      ) &&
+      dayjs(getIntegration.tokenExpiration).isBefore(dayjs())
+    ) {
+      const data = await this._refreshIntegrationService.refresh(
+        getIntegration
+      );
+
+      if (!data) {
+        return false;
+      }
+
+      getIntegration.token = data.accessToken;
+      getIntegration.refreshToken = data.refreshToken;
+
+      if (integrationProvider.refreshWait) {
+        await timer(10000);
+      }
     }
 
     if (
