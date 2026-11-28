@@ -5,17 +5,7 @@ name: Deploy to AWS
 # with Contents read and write on gitroomhq/postiz-aws only.
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - '.github/**'
-      - 'apps/extension/**'
-      - 'apps/sdk/**'
-      - 'apps/commands/**'
-      - 'Jenkins/**'
-      - 'reports/**'
+  workflow_dispatch:
 
 permissions: {}
 
